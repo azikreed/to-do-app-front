@@ -1,0 +1,17 @@
+:root {
+    --primary-color: #9E78CF;
+    --primary-hover-color: #8b5bce;
+    --text-color: #a29f9f;
+    --text-secondary-color: #5B5B5E;
+    --white-color: #FFFFFF;
+    --separator-color: #D4D6E0; 
+    --primary-second-color: #FF6464;
+    --font: "Inter", sans-serif;
+    --second-font: "Circular Std", sans-serif;
+}
+
+body {
+    font-family: var(--font);
+    margin: 0;
+    background: #1E1E1E;
+}
