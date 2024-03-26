@@ -10,11 +10,28 @@ import { Register } from './pages/Register/Register.tsx';
 import { RequireAuth } from './helpers/RequireAuth.tsx';
 import { Provider } from 'react-redux';
 import { store } from './store/store.ts';
+import { TaskList } from './pages/TaskList/TaskList.tsx';
+import { TaskDone } from './pages/TaskDone/TaskDone.tsx';
+import { AddTask } from './pages/AddTask/AddTask.tsx';
 
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <RequireAuth><Layout/></RequireAuth>
+		element: <RequireAuth><Layout/></RequireAuth>,
+		children: [
+			{
+				path:'',
+				element: <TaskList/>
+			},
+			{
+				path:'done',
+				element: <TaskDone/>
+			},
+			{
+				path:'add',
+				element: <AddTask/>
+			}
+		]
 	},
 	{
 		path: '/auth',

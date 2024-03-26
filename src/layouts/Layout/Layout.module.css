@@ -1,34 +1,33 @@
 .layout {
   display: flex;
   min-height: 100vh;
-  flex-direction: column;
+  width: 100%;
 }
 
 .sidebar {
   padding: 30px;
   border-right: 1px solid var(--separator-color);
+  width: 10%;
   display: flex;
   flex-direction: column;
 }
 
 .exit {
   margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 35px;
+  gap: 20px;
 }
 
 .link {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   text-decoration: none;
   color: var(--text-color);
 }
@@ -37,17 +36,18 @@
   color: var(--primary-color);
 }
 
+.link-icon {
+  width: 15px;
+}
+
 .active {
   color: var(--primary-color);
 }
 
 .user {
-  margin-bottom: 46px;
-  filter: drop-shadow(0px 8px 40px rgba(255, 197, 41, 0.25));
-}
-
-.avatar {
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--separator-color);
+  padding-bottom: 20px;
 }
 
 .name {
@@ -68,5 +68,18 @@
 
 .content {
   padding: 40px 60px;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+}
+
+.box {
+  padding: 50px 70px;
+  background: #1D1825;
+  border-radius: 20px;
+  display: flex;
+  min-width: 450px;
+  min-height: 400px;
 }
