@@ -12,7 +12,6 @@ export function loadState<T>(key: string): T | undefined {
 }
 
 export function saveState<T>(state:T, key: string) {
-	console.log(state);
 	const stringState = JSON.stringify(state);
 	localStorage.setItem(key,stringState);
 }
