@@ -1,0 +1,20 @@
+.message {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: transparent;
+  border-radius: 10px;
+  z-index: 10;
+  font-size: 16px;
+}
+
+.success {
+    color: #78CFB0; /* Цвет текста */
+    border: 1px solid #78CFB0;
+}
+
+.error {
+    color: #d32e52; /* Цвет текста */
+    border: 1px solid #d32e52;
+}
