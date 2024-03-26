@@ -30,7 +30,6 @@ export const login = createAsyncThunk('user/login',
 				email: params.email,
 				password: params.password
 			});
-			console.log(data);
 			return data;
 		} catch (e) {
 			if(e instanceof AxiosError){
@@ -103,7 +102,6 @@ export const userSlice = createSlice({
 			if(!action.payload) {
 				return;
 			}
-			console.log(action.payload);
 			state.jwt = action.payload.token;
 		});
 		builder.addCase(register.rejected, (state, action) => {
