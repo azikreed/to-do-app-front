@@ -35,6 +35,7 @@ export const login = createAsyncThunk('user/login',
 			if(e instanceof AxiosError){
 				throw new Error(e.message);
 			}
+			throw e;
 		}
 	}
 );

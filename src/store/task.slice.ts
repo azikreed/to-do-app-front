@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios, { AxiosRequestConfig } from 'axios';
-import { GetTaskResponse } from '../interfaces/task.interface';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { TaskResponse } from '../interfaces/task.interface';
 import { PREFIX } from '../helpers/API';
 import { RootState } from './store';
 
@@ -11,20 +11,22 @@ const getRequestConfig = (token: string | null): AxiosRequestConfig => ({
 });
 
 export interface TaskModel {
+	_id?: string;
   title: string;
   description: string;
   deadline: Date;
 }
 
 export interface TaskState {
-  tasks: GetTaskResponse[] | null;
-  deleteStatus: 'idle' | 'pending' | 'success' | 'error';
+  tasks: TaskResponse[] | null;
+  actionStatus: 'idle' | 'pending' | 'success' | 'error';
   deleteErrorMessage?: string;
+  createErrorMessage?: string;
 }
 
 const initialState: TaskState = {
 	tasks: null,
-	deleteStatus: 'idle'
+	actionStatus: 'idle'
 };
 
 export const deleteTask = createAsyncThunk<
@@ -48,18 +50,38 @@ export const deleteTask = createAsyncThunk<
 });
 
 export const getTasks = createAsyncThunk<
-  GetTaskResponse[],
+  TaskResponse[],
   void,
   { state: RootState }
 >('task/get', async (_, thunkApi) => {
 	const token = thunkApi.getState().user.jwt;
 
-	const { data } = await axios.get<GetTaskResponse[]>(
+	const { data } = await axios.get<TaskResponse[]>(
 		`${PREFIX}/task/get`,
 		getRequestConfig(token)
 	);
 	return data;
 });
+
+
+export const createTask = createAsyncThunk<TaskResponse, TaskModel, { state: RootState }>('task/create',
+	async (params: TaskModel, thunkApi) => {
+		const token = thunkApi.getState().user.jwt;
+		try {
+			const {data} = await axios.post<TaskResponse>(`${PREFIX}/task/create`, {
+				title: params.title,
+				description: params.description,
+				deadline: params.deadline
+			}, getRequestConfig(token));
+			return data;
+		} catch (e) {
+			if(e instanceof AxiosError){
+				throw new Error(e.message);
+			}
+			throw e;
+		}
+	}
+);
 
 export const taskSlice = createSlice({
 	name: 'task',
@@ -68,8 +90,11 @@ export const taskSlice = createSlice({
 		clearDeleteError: (state) => {
 			state.deleteErrorMessage = undefined;
 		},
-		clearDeleteStatus: (state) => {
-			state.deleteStatus = 'idle';
+		clearActionStatus: (state) => {
+			state.actionStatus = 'idle';
+		},
+		clearTaskErrorMessage: (state) => {
+			state.createErrorMessage = undefined;
 		}
 	},
 	extraReducers: (builder) => {
@@ -81,15 +106,31 @@ export const taskSlice = createSlice({
 			if (!action.payload) {
 				return;
 			}
-			state.deleteStatus = 'success';
+			state.actionStatus = 'success';
 			state.tasks = state.tasks!.filter((task) => task._id !== action.payload);
 		});
 		builder.addCase(deleteTask.rejected, (state, action) => {
-			state.deleteStatus = 'error';
+			state.actionStatus = 'error';
 			state.deleteErrorMessage = action.error.message ?? 'Ошибка при удалении задачи';
 		});
 		builder.addCase(deleteTask.pending, (state) => {
-			state.deleteStatus = 'pending';
+			state.actionStatus = 'pending';
+		});
+
+		builder.addCase(createTask.fulfilled, (state, action) => {
+			if (!action.payload) {
+				return;
+			}
+			state.actionStatus = 'success';
+			console.log(action.payload);
+			state.tasks?.push(action.payload);
+		});
+		builder.addCase(createTask.rejected, (state, action) => {
+			state.actionStatus = 'error';
+			state.createErrorMessage = action.error.message ?? 'Ошибка при добавлении задачи';
+		});
+		builder.addCase(createTask.pending, (state) => {
+			state.actionStatus = 'pending';
 		});
 	}
 });
