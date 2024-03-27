@@ -4,7 +4,7 @@ import { TaskCard } from '../../components/TaskCard/TaskCard';
 import styles from './TaskList.module.css';
 import { AppDispatch, RootState } from '../../store/store';
 import { useEffect } from 'react';
-import { deleteTask, getTasks, taskActions } from '../../store/task.slice';
+import { deleteTask, getTasks, taskActions, updateTask } from '../../store/task.slice';
 import { Snackbar } from '../../components/Snackbar/Snackbar';
 
 export function TaskList() {
@@ -13,6 +13,10 @@ export function TaskList() {
 
 	const deleteOne = async (id: string) => {
 		await dispatch(deleteTask(id));
+	};
+
+	const done = async (id: string) => {
+		await dispatch(updateTask({taskId: id, done: true}));
 	};
 
 	useEffect(() => {
@@ -34,7 +38,7 @@ export function TaskList() {
 			<Headling appearance="small">Таски</Headling>
 			<div className={styles['tasks']}>
 				{tasks?.map((task) => (
-					<TaskCard key={task._id} id={task._id} onDelete={deleteOne}>
+					<TaskCard key={task._id} id={task._id} onDelete={deleteOne} onUpdate={done}>
 						{task.title}
 					</TaskCard>
 				))}

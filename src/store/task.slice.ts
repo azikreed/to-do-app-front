@@ -17,6 +17,14 @@ export interface TaskModel {
   deadline: Date;
 }
 
+export interface TaskUpdateModel {
+	taskId: string;
+	title?: string;
+	description?: string;
+	deadline?: Date;
+	done?: boolean;
+}
+
 export interface TaskState {
   tasks: TaskResponse[] | null;
   actionStatus: 'idle' | 'pending' | 'success' | 'error';
@@ -83,6 +91,27 @@ export const createTask = createAsyncThunk<TaskResponse, TaskModel, { state: Roo
 	}
 );
 
+export const updateTask = createAsyncThunk<TaskResponse, TaskUpdateModel, { state: RootState }>('task/update',
+	async (params: TaskUpdateModel, thunkApi) => {
+		const token = thunkApi.getState().user.jwt;
+		try {
+			const { taskId, title, deadline, description, done } = params;
+			const {data} = await axios.patch<TaskResponse>(`${PREFIX}/task/update/${taskId}`, {
+				title: title,
+				description: description,
+				deadline: deadline,
+				done: done
+			}, getRequestConfig(token));
+			return data;
+		} catch (e) {
+			if(e instanceof AxiosError){
+				throw new Error(e.message);
+			}
+			throw e;
+		}
+	}
+);
+
 export const taskSlice = createSlice({
 	name: 'task',
 	initialState,
@@ -93,7 +122,7 @@ export const taskSlice = createSlice({
 		clearActionStatus: (state) => {
 			state.actionStatus = 'idle';
 		},
-		clearTaskErrorMessage: (state) => {
+		clearCreateErrorMessage: (state) => {
 			state.createErrorMessage = undefined;
 		}
 	},
@@ -130,6 +159,22 @@ export const taskSlice = createSlice({
 			state.createErrorMessage = action.error.message ?? 'Ошибка при добавлении задачи';
 		});
 		builder.addCase(createTask.pending, (state) => {
+			state.actionStatus = 'pending';
+		});
+
+		builder.addCase(updateTask.fulfilled, (state, action) => {
+			if (!action.payload) {
+				return;
+			}
+			state.actionStatus = 'success';
+			console.log(action.payload);
+			state.tasks = state.tasks!.filter((task) => task._id !== action.payload._id);
+		});
+		builder.addCase(updateTask.rejected, (state, action) => {
+			state.actionStatus = 'error';
+			state.createErrorMessage = action.error.message ?? 'Ошибка при добавлении задачи';
+		});
+		builder.addCase(updateTask.pending, (state) => {
 			state.actionStatus = 'pending';
 		});
 	}

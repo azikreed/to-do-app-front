@@ -26,7 +26,7 @@ export function AddTask() {
 
 	const submit = async (e: FormEvent) => {
 		e.preventDefault();
-		dispatch(taskActions.clearTaskErrorMessage());
+		dispatch(taskActions.clearCreateErrorMessage());
 		const target = e.target as typeof e.target & CreateTask;
 		const { title, description, deadline } = target;
 		await sendTask(title.value, description.value, deadline.value);
