@@ -11,7 +11,6 @@ import { RequireAuth } from './helpers/RequireAuth.tsx';
 import { Provider } from 'react-redux';
 import { store } from './store/store.ts';
 import { TaskList } from './pages/TaskList/TaskList.tsx';
-import { TaskDone } from './pages/TaskDone/TaskDone.tsx';
 import { AddTask } from './pages/AddTask/AddTask.tsx';
 
 const router = createBrowserRouter([
@@ -25,10 +24,14 @@ const router = createBrowserRouter([
 			},
 			{
 				path:'done',
-				element: <TaskDone/>
+				element: <TaskList/>
 			},
 			{
 				path:'add',
+				element: <AddTask/>
+			},
+			{
+				path:'task/:id',
 				element: <AddTask/>
 			}
 		]

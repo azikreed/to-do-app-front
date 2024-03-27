@@ -5,6 +5,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-decoration: none;
 }
 
 .title {
@@ -25,4 +26,9 @@
     border: none;
     background: transparent;
     cursor: pointer;
+}
+
+.done {
+    color: #78CFB0;
+    text-decoration: line-through   ;
 }

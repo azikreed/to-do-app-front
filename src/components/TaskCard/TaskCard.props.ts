@@ -6,4 +6,5 @@ export interface TaskCardProps extends HTMLAttributes<HTMLButtonElement> {
     id: string;
     onDelete: (id: string) => void;
     onUpdate: (id: string) => void;
+    type: 'done' | 'get';
 }

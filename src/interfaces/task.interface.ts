@@ -2,5 +2,6 @@ export interface TaskResponse {
     _id: string;
     title: string;
     description: string;
-    deadline: Date
+    deadline: Date;
+    user: string;
 }

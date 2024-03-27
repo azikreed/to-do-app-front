@@ -11,28 +11,31 @@ const getRequestConfig = (token: string | null): AxiosRequestConfig => ({
 });
 
 export interface TaskModel {
-	_id?: string;
+  _id?: string;
   title: string;
   description: string;
   deadline: Date;
 }
 
 export interface TaskUpdateModel {
-	taskId: string;
-	title?: string;
-	description?: string;
-	deadline?: Date;
-	done?: boolean;
+  taskId: string;
+  title?: string;
+  description?: string;
+  deadline?: Date;
+  done?: boolean;
 }
 
 export interface TaskState {
   tasks: TaskResponse[] | null;
+  task?: TaskResponse | null;
   actionStatus: 'idle' | 'pending' | 'success' | 'error';
   deleteErrorMessage?: string;
   createErrorMessage?: string;
+  updateErrorMessage?: string;
 }
 
 const initialState: TaskState = {
+	task: null,
 	tasks: null,
 	actionStatus: 'idle'
 };
@@ -59,59 +62,86 @@ export const deleteTask = createAsyncThunk<
 
 export const getTasks = createAsyncThunk<
   TaskResponse[],
-  void,
+  'done' | 'get',
   { state: RootState }
->('task/get', async (_, thunkApi) => {
+>('task/get', async (type: 'done' | 'get', thunkApi) => {
 	const token = thunkApi.getState().user.jwt;
 
 	const { data } = await axios.get<TaskResponse[]>(
-		`${PREFIX}/task/get`,
+		`${PREFIX}/task/${type}`,
 		getRequestConfig(token)
 	);
 	return data;
 });
 
+export const getTaskById = createAsyncThunk<
+  TaskResponse,
+  string,
+  { state: RootState }
+>('task/getById', async (taskId, thunkAPI) => {
+	try {
+		const token = thunkAPI.getState().user.jwt;
+		const { data } = await axios.get<TaskResponse>(
+			`${PREFIX}/task/get/${taskId}`,
+			getRequestConfig(token)
+		);
+		return data;
+	} catch (error) {
+		throw new Error('Failed to fetch task by ID');
+	}
+});
 
-export const createTask = createAsyncThunk<TaskResponse, TaskModel, { state: RootState }>('task/create',
-	async (params: TaskModel, thunkApi) => {
-		const token = thunkApi.getState().user.jwt;
-		try {
-			const {data} = await axios.post<TaskResponse>(`${PREFIX}/task/create`, {
+export const createTask = createAsyncThunk<
+  TaskResponse,
+  TaskModel,
+  { state: RootState }
+>('task/create', async (params: TaskModel, thunkApi) => {
+	const token = thunkApi.getState().user.jwt;
+	try {
+		const { data } = await axios.post<TaskResponse>(
+			`${PREFIX}/task/create`,
+			{
 				title: params.title,
 				description: params.description,
 				deadline: params.deadline
-			}, getRequestConfig(token));
-			return data;
-		} catch (e) {
-			if(e instanceof AxiosError){
-				throw new Error(e.message);
-			}
-			throw e;
+			},
+			getRequestConfig(token)
+		);
+		return data;
+	} catch (e) {
+		if (e instanceof AxiosError) {
+			throw new Error(e.message);
 		}
+		throw e;
 	}
-);
+});
 
-
-export const updateTask = createAsyncThunk<TaskResponse, TaskUpdateModel, { state: RootState }>('task/update',
-	async (params: TaskUpdateModel, thunkApi) => {
-		const token = thunkApi.getState().user.jwt;
-		try {
-			const { taskId, title, deadline, description, done } = params;
-			const {data} = await axios.patch<TaskResponse>(`${PREFIX}/task/update/${taskId}`, {
+export const updateTask = createAsyncThunk<
+  TaskResponse,
+  TaskUpdateModel,
+  { state: RootState }
+>('task/update', async (params: TaskUpdateModel, thunkApi) => {
+	const token = thunkApi.getState().user.jwt;
+	try {
+		const { taskId, title, deadline, description, done } = params;
+		const { data } = await axios.patch<TaskResponse>(
+			`${PREFIX}/task/update/${taskId}`,
+			{
 				title: title,
 				description: description,
 				deadline: deadline,
 				done: done
-			}, getRequestConfig(token));
-			return data;
-		} catch (e) {
-			if(e instanceof AxiosError){
-				throw new Error(e.message);
-			}
-			throw e;
+			},
+			getRequestConfig(token)
+		);
+		return data;
+	} catch (e) {
+		if (e instanceof AxiosError) {
+			throw new Error(e.message);
 		}
+		throw e;
 	}
-);
+});
 
 export const taskSlice = createSlice({
 	name: 'task',
@@ -125,11 +155,18 @@ export const taskSlice = createSlice({
 		},
 		clearCreateErrorMessage: (state) => {
 			state.createErrorMessage = undefined;
+		},
+		clearUpdateErrorMessage: (state) => {
+			state.updateErrorMessage = undefined;
 		}
 	},
 	extraReducers: (builder) => {
 		builder.addCase(getTasks.fulfilled, (state, action) => {
 			state.tasks = action.payload;
+		});
+
+		builder.addCase(getTaskById.fulfilled, (state, action) => {
+			state.task = action.payload;
 		});
 
 		builder.addCase(deleteTask.fulfilled, (state, action) => {
@@ -141,7 +178,8 @@ export const taskSlice = createSlice({
 		});
 		builder.addCase(deleteTask.rejected, (state, action) => {
 			state.actionStatus = 'error';
-			state.deleteErrorMessage = action.error.message ?? 'Ошибка при удалении задачи';
+			state.deleteErrorMessage =
+        action.error.message ?? 'Ошибка при удалении задачи';
 		});
 		builder.addCase(deleteTask.pending, (state) => {
 			state.actionStatus = 'pending';
@@ -157,7 +195,8 @@ export const taskSlice = createSlice({
 		});
 		builder.addCase(createTask.rejected, (state, action) => {
 			state.actionStatus = 'error';
-			state.createErrorMessage = action.error.message ?? 'Ошибка при добавлении задачи';
+			state.createErrorMessage =
+        action.error.message ?? 'Ошибка при добавлении задачи';
 		});
 		builder.addCase(createTask.pending, (state) => {
 			state.actionStatus = 'pending';
@@ -169,11 +208,14 @@ export const taskSlice = createSlice({
 			}
 			state.actionStatus = 'success';
 			console.log(action.payload);
-			state.tasks = state.tasks!.filter((task) => task._id !== action.payload._id);
+			state.tasks = state.tasks!.filter(
+				(task) => task._id !== action.payload._id
+			);
 		});
 		builder.addCase(updateTask.rejected, (state, action) => {
 			state.actionStatus = 'error';
-			state.createErrorMessage = action.error.message ?? 'Ошибка при добавлении задачи';
+			state.createErrorMessage =
+        action.error.message ?? 'Ошибка при добавлении задачи';
 		});
 		builder.addCase(updateTask.pending, (state) => {
 			state.actionStatus = 'pending';
