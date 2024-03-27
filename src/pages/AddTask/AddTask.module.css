@@ -1,0 +1,25 @@
+.add-task {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.field label {
+    color: #a29f9f;
+    font-size: 17px;
+    font-style: normal;
+    font-weight: 400;
+}
