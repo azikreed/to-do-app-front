@@ -46,7 +46,7 @@ export function Layout() {
 				Выполненные
 				</NavLink>
 			</div>
-			<Button onClick={logout} className={styles['exit']}>
+			<Button onClick={logout} className={styles['exit']} appearance='small'>
 				Выход
 			</Button>
 		</div>
