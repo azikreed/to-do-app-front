@@ -9,7 +9,7 @@ import { Snackbar } from '../../components/Snackbar/Snackbar';
 
 export function TaskList() {
 	const dispatch = useDispatch<AppDispatch>();
-	const { tasks, deleteStatus } = useSelector((s: RootState) => s.task);
+	const { tasks, actionStatus } = useSelector((s: RootState) => s.task);
 
 	const deleteOne = async (id: string) => {
 		await dispatch(deleteTask(id));
@@ -20,14 +20,14 @@ export function TaskList() {
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (deleteStatus === 'success' || deleteStatus === 'error') {
+		if (actionStatus === 'success' || actionStatus === 'error') {
 			const timer = setTimeout(() => {
-				dispatch(taskActions.clearDeleteStatus());
-			}, 10000); // Скрыть статус после 3 секунд
+				dispatch(taskActions.clearActionStatus());
+			}, 3000); // Скрыть статус после 3 секунд
 
 			return () => clearTimeout(timer); // Очистка таймера при размонтировании компонента
 		}
-	}, [deleteStatus, dispatch]);
+	}, [actionStatus, dispatch]);
 
 	return (
 		<div className={styles['list']}>
@@ -39,8 +39,8 @@ export function TaskList() {
 					</TaskCard>
 				))}
 			</div>
-			{deleteStatus === 'success' && <Snackbar status='success' message="Удалено успешно" />}
-			{deleteStatus === 'error' && <Snackbar status='error' message="Ошибка при удалении" />}
+			{actionStatus === 'success' && <Snackbar status='success' message="Удалено успешно" />}
+			{actionStatus === 'error' && <Snackbar status='error' message="Ошибка при удалении" />}
 		</div>
 	);
 }
