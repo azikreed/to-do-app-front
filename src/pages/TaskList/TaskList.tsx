@@ -39,8 +39,8 @@ export function TaskList() {
 					</TaskCard>
 				))}
 			</div>
-			{actionStatus === 'success' && <Snackbar status='success' message="Удалено успешно" />}
-			{actionStatus === 'error' && <Snackbar status='error' message="Ошибка при удалении" />}
+			{actionStatus === 'success' && <Snackbar status='success' />}
+			{actionStatus === 'error' && <Snackbar status='error' />}
 		</div>
 	);
 }
