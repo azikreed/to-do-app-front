@@ -42,7 +42,7 @@ export function Login() {
 
 	return (
 		<div className={styles['login']}>
-			<Headling>Вход</Headling>
+			<Headling appearance='big'>Вход</Headling>
 			{loginErrorMessage && <div className={styles['error']}>{loginErrorMessage}</div>}
 			<form className={styles['form']}  onSubmit={submit}>
 				<div className={styles['field']}>

@@ -41,7 +41,7 @@ export function Register() {
 
 	return (
 		<div className={styles['login']}>
-			<Headling>Регистрация</Headling>
+			<Headling appearance='big'>Регистрация</Headling>
 			{registerErrorMessage && <div className={styles['error']}>{registerErrorMessage}</div>}
 			<form className={styles['form']} onSubmit={submit}>
 				<div className={styles['field']}>
