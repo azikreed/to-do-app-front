@@ -7,7 +7,7 @@ import { createTask, getTaskById, taskActions, updateTask } from '../../store/ta
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { Snackbar } from '../../components/Snackbar/Snackbar';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 export interface CreateTask {
     title: {
@@ -25,19 +25,34 @@ export function AddTask() {
 	const dispatch = useDispatch<AppDispatch>();
 	const { task, actionStatus } = useSelector((s: RootState) => s.task);
 	const { id } = useParams<{ id: string }>();
+	const {pathname} = useLocation();
 	const [formData, setFormData] = useState({
 		title: '',
 		description: '',
 		deadline: ''
 	});
 
-
 	useEffect(() => {
-		if (id) {
+		if (!id && !pathname.match(/^\/task\/\w+$/)) {
+			dispatch(taskActions.clearTask());
+			setFormData({
+				title: '',
+				description: '',
+				deadline: ''
+			});
+		} else {
 			dispatch(getTaskById(id));
 		}
-	}, [dispatch, id]);
+	}, [dispatch, id, pathname]);
 
+	const sendTask = async (taskId: string, title: string, description: string, deadline: Date, isUpdate: boolean) => {
+		if (isUpdate) {
+			dispatch(updateTask({ taskId, title, description, deadline: new Date(deadline) }));
+		} else {
+			dispatch(createTask({ title, description, deadline: new Date(deadline) }));
+		}
+	};
+	
 	const submit = async (e: FormEvent) => {
 		e.preventDefault();
 		dispatch(taskActions.clearCreateErrorMessage());
@@ -47,14 +62,6 @@ export function AddTask() {
 			await sendTask(id, title.value, description.value, deadline.value, true);
 		} else {
 			await sendTask('', title.value, description.value, deadline.value, false);
-		}
-	};
-
-	const sendTask = async (taskId: string, title: string, description: string, deadline: Date, isUpdate: boolean) => {
-		if (isUpdate) {
-			dispatch(updateTask({ taskId, title, description, deadline: new Date(deadline) }));
-		} else {
-			dispatch(createTask({ title, description, deadline: new Date(deadline) }));
 		}
 	};
 
@@ -68,6 +75,16 @@ export function AddTask() {
 		}
 	}, [actionStatus, dispatch]);
 
+	useEffect(() => {
+		if (task) {
+			setFormData({
+				title: task.title || '',
+				description: task.description || '',
+				deadline: task.deadline ? new Date(task.deadline).toISOString().split('T')[0] : ''
+			});
+		}
+	}, [task]);
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		const { name, value } = e.target;
 		setFormData({
@@ -78,11 +95,11 @@ export function AddTask() {
 
 	return (
 		<div className={styles['add-task']}>
-			<Headling>Добавить таск</Headling>
+			<Headling>{id ? 'Обновить' : 'Добавить'} таск</Headling>
 			<form className={styles['add-form']} onSubmit={submit}>
 				<div className={styles['field']}>
 					<label htmlFor="title">Заголовок таска</label>
-					<Input name='title' id='title'  value={formData.title} onChange={handleChange} placeholder='Заголовок'/>
+					<Input name='title' id='title' value={formData.title} onChange={handleChange} placeholder='Заголовок'/>
 				</div>
 				<div className={styles['field']}>
 					<label htmlFor="description">Описание таска</label>

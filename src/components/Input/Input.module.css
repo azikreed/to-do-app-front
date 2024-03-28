@@ -12,3 +12,7 @@
 .input::placeholder {
     color: #777777;
 }
+
+@media screen and (max-width: 480px) {
+    
+}

@@ -76,7 +76,7 @@ export const getTasks = createAsyncThunk<
 
 export const getTaskById = createAsyncThunk<
   TaskResponse,
-  string,
+  string | undefined,
   { state: RootState }
 >('task/getById', async (taskId, thunkAPI) => {
 	try {
@@ -158,6 +158,9 @@ export const taskSlice = createSlice({
 		},
 		clearUpdateErrorMessage: (state) => {
 			state.updateErrorMessage = undefined;
+		},
+		clearTask: (state) => {
+			state.task = null;
 		}
 	},
 	extraReducers: (builder) => {
