@@ -56,7 +56,7 @@ export function Register() {
 					<label htmlFor="name">Ваше имя</label>
 					<Input id='name' name='name' placeholder='Имя'/>
 				</div>
-				<Button appearance='big'>Вход</Button>
+				<Button appearance='big'>Регистрация</Button>
 			</form>
 			<div className={styles['links']}>
 				<div>Есть аккаунт?</div>

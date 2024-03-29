@@ -3,11 +3,12 @@ import styles from './Layout.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../store/store';
 import { getProfile, userActions } from '../../store/user.slice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../../components/Button/Button';
 import cn from 'classnames';
 
 export function Layout() {
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 	const profile = useSelector((s: RootState) => s.user.profile);
@@ -21,13 +22,22 @@ export function Layout() {
 		navigate('/auth/login');
 	};
 
-	return <div className={styles['layout']}>
-		<div className={styles['sidebar']}>
+	const toggleSidebar = () => {
+		setIsSidebarOpen(!isSidebarOpen);
+	};
+
+	return <div className={`${styles['layout']} ${isSidebarOpen ? styles['sidebar-open'] : ''}`}>
+		<div className={cn({
+			[styles['sidebar']]: isSidebarOpen,
+			[styles['toggle']]: !isSidebarOpen
+		})}>
 			<div className={styles['user']}>
 				<div className={styles['name']}>{profile?.name}</div>
 				<div className={styles['email']}>{profile?.email}</div>
 			</div>
-			<div className={styles['menu']}>
+			<div className={cn(styles['menu'], {
+				[styles['toggle']]: isSidebarOpen 
+			})}>
 				<NavLink to="/" className={({isActive})=>cn(styles['link'], {
 					[styles.active]: isActive
 				})}>
@@ -51,6 +61,9 @@ export function Layout() {
 			</Button>
 		</div>
 		<div className={styles['content']}>
+			<Button appearance='rounded' className={styles['toggle-button']} onClick={toggleSidebar}>
+				{isSidebarOpen ? <img src='/arrow_left.svg'/> : <img src='/arrow_right.svg'/>}
+			</Button>
 			<div className={styles['box']}>
 				<Outlet/>
 			</div>

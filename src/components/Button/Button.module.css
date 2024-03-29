@@ -27,3 +27,15 @@
 .accent:hover {
   background: var(--primary-hover-color);
 }
+
+.rounded {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 1px solid var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

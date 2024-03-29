@@ -1,13 +1,16 @@
 .layout {
+  position: relative;
   display: flex;
   height: 100vh;
   width: 100%;
 }
 
 .sidebar {
+  position: absolute;
+  height: 100vh;
+  box-sizing: border-box;
   padding: 30px;
   border-right: 1px solid var(--separator-color);
-  width: 10%;
   display: flex;
   flex-direction: column;
 }
@@ -82,4 +85,12 @@
   display: flex;
   min-width: 450px;
   min-height: 400px;
+}
+
+.toggle {
+  display: none;
+}
+
+.toggle-button {
+
 }
