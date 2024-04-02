@@ -14,5 +14,8 @@
 }
 
 @media screen and (max-width: 480px) {
-    
+    .input {
+        padding: 15px;
+        font-size: 12px;
+    }
 }

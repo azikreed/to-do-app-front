@@ -23,3 +23,9 @@
     font-style: normal;
     font-weight: 400;
 }
+
+@media screen and (max-width: 480px) {
+    .field label {
+        font-size: 13px;
+    }
+}

@@ -1,34 +1,56 @@
-.task-card  {
-    padding: 22px 20px;
-    background: #15101C;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-decoration: none;
+.task-card {
+  padding: 22px 20px;
+  background: #15101c;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  gap: 10px;
 }
 
 .title {
-    color: var(--primary-color);
-    font-size: 16px;
-    font-weight: 400;
-    margin: 0;
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
 }
 
 .actions {
-    display: flex;
-    gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .btn {
-    width: 30px;
-    height: 30px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
 }
 
 .done {
-    color: #78CFB0;
-    text-decoration: line-through   ;
+  color: #78cfb0;
+  text-decoration: line-through;
+}
+
+@media screen and (max-width: 480px) {
+  .task-card {
+    padding: 10px 15px;
+  }
+
+  .actions {
+    gap: 5px;
+  }
+
+  .title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn img {
+    width: 20px;
+    height: 20px;
+  }
 }

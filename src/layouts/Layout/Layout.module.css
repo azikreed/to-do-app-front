@@ -13,6 +13,7 @@
   border-right: 1px solid var(--separator-color);
   display: flex;
   flex-direction: column;
+  background: #1e1e1e;
 }
 
 .exit {
@@ -80,7 +81,7 @@
 
 .box {
   padding: 50px 70px;
-  background: #1D1825;
+  background: #1d1825;
   border-radius: 20px;
   display: flex;
   min-width: 450px;
@@ -92,5 +93,41 @@
 }
 
 .toggle-button {
+  position: absolute;
+  left: calc(10% + 60px);
+  top: 20px;
+}
 
+.toggle-button:hover {
+  background-color: transparent !important;
+}
+
+.sidebar-off {
+  left: 20px;
+}
+
+@media screen and (max-width: 480px) {
+  .layout {
+    width: 100%;
+  }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+  }
+  .toggle-button {
+    top: 10px;
+    left: calc(100% - 50px);
+  }
+  .sidebar-off {
+    top: 10px;
+    left: 10px;
+  }
+  .box {
+    padding: 20px;
+    min-width: 300px;
+    min-height: 400px;
+  }
+  .content {
+    padding: 20px 30px;
+  }
 }

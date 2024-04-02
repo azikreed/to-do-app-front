@@ -8,7 +8,7 @@ import Button from '../../components/Button/Button';
 import cn from 'classnames';
 
 export function Layout() {
-	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();
 	const profile = useSelector((s: RootState) => s.user.profile);
@@ -36,7 +36,7 @@ export function Layout() {
 				<div className={styles['email']}>{profile?.email}</div>
 			</div>
 			<div className={cn(styles['menu'], {
-				[styles['toggle']]: isSidebarOpen 
+				[styles['toggle']]: !isSidebarOpen
 			})}>
 				<NavLink to="/" className={({isActive})=>cn(styles['link'], {
 					[styles.active]: isActive
@@ -60,10 +60,12 @@ export function Layout() {
 				Выход
 			</Button>
 		</div>
+		<Button appearance='rounded' className={cn(styles['toggle-button'],{
+			[styles['sidebar-off']]: !isSidebarOpen
+		})} onClick={toggleSidebar}>
+			{isSidebarOpen ? <img src='/arrow_left.svg'/> : <img src='/arrow_right.svg'/>}
+		</Button>
 		<div className={styles['content']}>
-			<Button appearance='rounded' className={styles['toggle-button']} onClick={toggleSidebar}>
-				{isSidebarOpen ? <img src='/arrow_left.svg'/> : <img src='/arrow_right.svg'/>}
-			</Button>
 			<div className={styles['box']}>
 				<Outlet/>
 			</div>
